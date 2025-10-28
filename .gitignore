@@ -14,17 +14,15 @@ package-lock.json
 inventario.db
 sessions.db
 
-# Descargas / artefactos (no subir instaladores pesados)
-downloads/
+# Descargas / builds (mantener carpeta con marcador)
+downloads/*
+!downloads/.gitkeep
 
-# Compilados / builds
-dist/
+# Cobertura / dist
 coverage/
+dist/
 
 # Sistema / editor
 .DS_Store
 Thumbs.db
 .vscode/
-
-downloads/*
-!downloads/.gitkeep
