@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pago (simulado) — InventarioPro</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .checkout{ max-width:560px;margin:40px auto;padding:20px;border:1px solid var(--line,#22303f);border-radius:16px;background:var(--bg-2,#0d1420);box-shadow:0 10px 28px rgba(0,0,0,.22); }
+    .row{ display:grid; gap:8px; margin:10px 0; }
+    .row input{ padding:12px;border-radius:10px;border:1px solid #334155;background:#0b1422;color:#e6eefc; }
+    .row-2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .muted{ color:var(--muted,#9aa6b2) }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html">InventarioPro</a>
+      <nav class="nav-links">
+        <a href="index.html#funciones">Funciones</a>
+        <a href="pricing.html" class="btn btn-nav">Precios</a>
+        <a href="index.html#empresa">Empresa</a>
+        <a href="index.html#contacto">Contacto</a>
+      </nav>
+      <div id="userBox"></div>
+      <button class="nav-toggle" aria-label="Menú">☰</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 style="text-align:center;margin:30px 0 10px">Pago (simulado)</h2>
+
+    <div id="need-login" class="checkout" style="display:none;text-align:center">
+      <p>Debes iniciar sesión para pagar.</p>
+      <a class="btn btn-primary" id="loginLink" href="account.html">Entrar</a>
+    </div>
+
+    <div id="form-wrap" class="checkout" style="display:none">
+      <h3 style="margin:0 0 6px">InventarioPro (Windows)</h3>
+      <p class="muted" style="margin:0 0 12px">Licencia de pago único</p>
+
+      <div style="text-align:center;margin:8px 0 16px">
+        <div id="price-pen" style="font-size:36px;font-weight:800">S/ 186</div>
+        <div class="muted">≈ $49 (referencial)</div>
+      </div>
+
+      <form id="payForm">
+        <div class="row">
+          <label>Nombre en la tarjeta</label>
+          <input name="name" placeholder="Tu nombre" required>
+        </div>
+        <div class="row">
+          <label>Número de tarjeta (simulado)</label>
+          <input name="card" placeholder="4242 4242 4242 4242" inputmode="numeric" required>
+          <small class="muted">Usa <b>4242 4242 4242 4242</b> para aprobar. Usa <b>4000 0000 0000 0002</b> para simular rechazo.</small>
+        </div>
+        <div class="row row-2">
+          <div class="row">
+            <label>Vencimiento (MM/AA)</label>
+            <input name="exp" placeholder="12/28" required>
+          </div>
+          <div class="row">
+            <label>CVC</label>
+            <input name="cvc" placeholder="123" required>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px">
+          <button class="btn btn-primary" type="submit">Pagar ahora (simulado)</button>
+          <a class="btn btn-ghost" href="pricing.html">Cancelar</a>
+        </div>
+        <p id="msg" class="muted" style="min-height:20px;margin:6px 0 0"></p>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/notify.js"></script>
+  <script>
+    // Mostrar precio PEN referencial
+    const USD=49, TC=3.8;
+    document.getElementById('price-pen').textContent =
+      (USD*TC).toLocaleString('es-PE',{style:'currency',currency:'PEN',maximumFractionDigits:0});
+
+    // Chequear sesión
+    (async ()=>{
+      const r=await fetch('/api/me'); const j=await r.json();
+      const needLogin=document.getElementById('need-login');
+      const formWrap=document.getElementById('form-wrap');
+      const loginLink=document.getElementById('loginLink');
+      if(!j.user){
+        needLogin.style.display='block';
+        loginLink.href = 'account.html?returnTo=' + encodeURIComponent('/checkout.html');
+      }else{
+        formWrap.style.display='block';
+      }
+    })();
+
+    // Enviar pago simulado
+    document.getElementById('payForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = { card: fd.get('card') };
+
+  const msg = document.getElementById('msg');
+  msg.textContent = 'Procesando…';
+
+  try{
+    const res = await fetch('/api/mock-pay', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    const j = await res.json();
+    if (j.ok){
+      setFlash('success', 'Compra exitosa. Ya puedes descargar la app.');
+      window.location.href = 'success.html';
+    }else{
+      msg.textContent = '';
+      showToast(j.error || 'Pago rechazado (simulado).', 'error', 4500);
+    }
+  }catch{
+    msg.textContent = '';
+    showToast('No se pudo procesar el pago (simulado).', 'error', 4500);
+  }
+});
+
+  </script>
+
+  <script src="js/auth-ui.js"></script>
+</body>
+</html>

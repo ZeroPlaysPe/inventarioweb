@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>InventarioPro — App de Inventario para Windows</title>
+  <meta name="description" content="App de escritorio para gestionar inventarios: stock, compras, ventas y reportes. Pago seguro con Stripe y descarga inmediata.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">InventarioPro</a>
+    <nav class="nav-links">
+      <a href="index.html#funciones">Funciones</a>
+      <a href="pricing.html" class="btn btn-nav">Precios</a>
+      <a href="index.html#empresa">Empresa</a>
+      <a href="index.html#contacto">Contacto</a>
+    </nav>
+
+    <!-- AQUI se pintará el botón "Entrar" o el menú del usuario -->
+    <div id="userBox"></div>
+
+    <button class="nav-toggle" aria-label="Menú">☰</button>
+  </div>
+</header>
+
+
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <h1>App de Inventario para tu negocio</h1>
+        <p>Controla stock, compras y ventas en tu PC. Reportes listos para decidir, sin complicaciones.</p>
+        <div class="hero-ctas">
+          <a href="pricing.html" class="btn btn-primary">Comprar y descargar</a>
+          <a href="#funciones" class="btn btn-ghost">Ver funciones</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <div class="mockup-card">
+          <div class="mockup-bar"></div>
+          <div class="mockup-content">
+            <h3>InventarioPro (Windows)</h3>
+            <ul>
+              <li>📦 Kardex y stock por almacén</li>
+              <li>🔔 Alertas de reposición</li>
+              <li>🧾 Ventas con comprobantes</li>
+              <li>📈 Reportes y exportación</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUNCIONES -->
+  <section id="funciones" class="container">
+    <header class="section-head">
+      <h2>Funciones principales</h2>
+      <p>Todo lo que necesitas para tener tu inventario al día.</p>
+    </header>
+    <div class="cards" style="padding-bottom:30px">
+      <article class="card"><div class="card-body">
+        <h3>Gestión de Stock</h3>
+        <p>Entradas, salidas, traslado entre almacenes, lotes/series y conteos cíclicos.</p>
+      </div></article>
+      <article class="card"><div class="card-body">
+        <h3>Compras</h3>
+        <p>Órdenes, recepción y costos; umbrales de reposición y proveedores frecuentes.</p>
+      </div></article>
+      <article class="card"><div class="card-body">
+        <h3>Ventas</h3>
+        <p>Precios por lista, promociones y emisión de comprobantes (boleta/factura).* </p>
+      </div></article>
+      <article class="card"><div class="card-body">
+        <h3>Reportes</h3>
+        <p>Kardex valorizado, rotación, valorización y exportación a Excel/PDF.</p>
+      </div></article>
+      <article class="card"><div class="card-body">
+        <h3>Usuarios y permisos</h3>
+        <p>Perfiles por rol para proteger información sensible.</p>
+      </div></article>
+      <article class="card"><div class="card-body">
+        <h3>Soporte</h3>
+        <p>Actualizaciones por 6 meses y soporte por correo.</p>
+      </div></article>
+    </div>
+    <p class="muted" style="text-align:center;margin:-10px 0 40px">* Integraciones locales según país pueden requerir configuración adicional.</p>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="container" style="padding-bottom:50px">
+    <header class="section-head">
+      <h2>¿Cómo funciona la compra?</h2>
+      <p>Proceso simple y seguro con Stripe.</p>
+    </header>
+    <div class="card" style="padding:18px">
+      <ol style="margin:0; padding-left:18px; line-height:1.8">
+        <li>Ve a <strong>Precios</strong> y haz clic en <em>Comprar ahora</em>.</li>
+        <li>Realiza el pago en la pasarela segura de Stripe.</li>
+        <li>Serás redirigido a la página de éxito para <strong>descargar</strong> el instalador.</li>
+        <li>Instala en tu PC y activa con tu correo de compra.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- EMPRESA -->
+  <section id="empresa" class="container" style="padding-bottom:50px">
+    <header class="section-head">
+      <h2>Sobre la empresa</h2>
+      <p>Quiénes somos y por qué elegirnos.</p>
+    </header>
+    <div class="card" style="padding:18px">
+      <p><strong>InventarioPro S.A.C.</strong> es una empresa de software con foco en micro y pequeñas empresas.
+      Desarrollamos herramientas simples y confiables para gestionar inventarios, ventas y compras.</p>
+      <ul style="margin:10px 0 0; padding-left:18px; line-height:1.8">
+        <li>+5 años construyendo soluciones de gestión.</li>
+        <li>Soporte en español por correo.</li>
+        <li>Actualizaciones constantes orientadas a la usabilidad.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="container" style="padding-bottom:70px">
+    <header class="section-head">
+      <h2>Contacto</h2>
+      <p>¿Dudas antes de comprar? Escríbenos.</p>
+    </header>
+    <div class="card" style="padding:18px">
+      <p style="margin:0 0 8px">Correo: <a href="mailto:soporte@inventariopro.com">soporte@inventariopro.com</a></p>
+      <p style="margin:0">Horario: Lun–Vie, 9:00–18:00</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="promo">
+    <div class="container promo-wrap">
+      <div class="promo-copy">
+        <h3>¿Listo para ordenar tu inventario?</h3>
+        <p>Compra ahora y descarga al instante.</p>
+      </div>
+      <a href="pricing.html" class="btn btn-primary">Comprar ahora</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="#funciones">Funciones</a></li>
+          <li><a href="pricing.html">Precios</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#empresa">Sobre nosotros</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-brand">
+        <span class="brand">InventarioPro</span>
+        <p>© 2025 InventarioPro S.A.C.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/notify.js"></script>
+  <script>
+    const toggle = document.querySelector('.nav-toggle');
+    const links  = document.querySelector('.nav-links');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+  </script>
+  <script src="js/auth-ui.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# Entorno / secretos
+.env
+*.env
+
+# Bases de datos / sesiones
+inventario.db
+sessions.db
+
+# Descargas / artefactos (no subir instaladores pesados)
+downloads/
+
+# Compilados / builds
+dist/
+coverage/
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+downloads/*
+!downloads/.gitkeep
