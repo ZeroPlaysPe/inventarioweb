@@ -185,3 +185,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log('Servidor listo en puerto', PORT);
 });
+
+const file = path.join(process.cwd(), 'downloads', 'inventario-app.zip');
+return res.download(file, 'SistemaInventario.zip');
+
