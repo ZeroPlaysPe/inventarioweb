@@ -186,6 +186,17 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('Servidor listo en puerto', PORT);
 });
 
-const file = path.join(process.cwd(), 'downloads', 'inventario-app.rar');
-return res.download(file, 'SistemaInventario.zip');
+// ===== DESCARGA =====
+app.get('/download', requireAuth, async (req, res) => {
+  try {
+    if (!req.session.user.purchased) {
+      return res.status(403).send('Necesitas pagar primero.');
+    }
 
+    const file = path.join(process.cwd(), 'downloads', 'inventario-app.zip');
+    return res.download(file, 'SistemaInventario.zip');
+  } catch (err) {
+    console.error('DOWNLOAD', err);
+    return res.status(500).send('Error al descargar');
+  }
+});
