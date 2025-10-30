@@ -18,3 +18,30 @@ document.addEventListener("click", async (e) => {
     }
   }
 });
+// registro
+fetch('/api/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password }),
+  credentials: 'include'
+});
+
+// saber quién soy
+fetch('/api/me', {
+  credentials: 'include'
+});
+
+// logout
+fetch('/api/logout', {
+  method: 'POST',
+  credentials: 'include'
+});
+
+// pago simulado
+fetch('/api/mock-pay', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ card }),
+  credentials: 'include'
+});
+
