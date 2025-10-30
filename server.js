@@ -1,4 +1,4 @@
-// server.js sencillo para Render y local
+// server.js – versión para Render
 import 'dotenv/config';
 import express from 'express';
 import session from 'express-session';
@@ -8,22 +8,21 @@ import { fileURLToPath } from 'url';
 import { getDB } from './db.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// si estás detrás de proxy (Render)
+// Render está detrás de proxy
 app.set('trust proxy', 1);
 
-// middlewares
+// middlewares básicos
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// si no hay SECRET en render, usamos uno fijo
-const SECRET = process.env.SESSION_SECRET || 'clave-super-simple';
+// sesión
 app.use(
   session({
-    secret: SECRET,
+    secret: process.env.SESSION_SECRET || 'dev-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -36,7 +35,7 @@ app.use(
 // servir carpeta public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// helper
+// helper de auth (SOLO UNO)
 function requireAuth(req, res, next) {
   if (!req.session.user) {
     return res.status(401).json({ ok: false, error: 'No autenticado' });
@@ -44,7 +43,11 @@ function requireAuth(req, res, next) {
   next();
 }
 
-// ===== REGISTRO =====
+/* ========================
+   AUTH
+   ======================== */
+
+// registro
 app.post('/api/register', async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -53,7 +56,7 @@ app.post('/api/register', async (req, res) => {
     }
 
     const db = await getDB();
-    const exists = await db.get('SELECT id FROM users WHERE email=?', [email]);
+    const exists = await db.get('SELECT id FROM users WHERE email = ?', [email]);
     if (exists) {
       return res.status(409).json({ ok: false, error: 'El email ya existe' });
     }
@@ -72,7 +75,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// ===== LOGIN =====
+// login
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -82,7 +85,7 @@ app.post('/api/login', async (req, res) => {
 
     const db = await getDB();
     const user = await db.get(
-      'SELECT id, email, password_hash, purchased FROM users WHERE email=?',
+      'SELECT id, email, password_hash, purchased FROM users WHERE email = ?',
       [email]
     );
     if (!user) {
@@ -99,6 +102,7 @@ app.post('/api/login', async (req, res) => {
       email: user.email,
       purchased: user.purchased ? 1 : 0
     };
+
     return res.json({ ok: true });
   } catch (err) {
     console.error('LOGIN', err);
@@ -106,7 +110,14 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// ===== QUIÉN SOY =====
+// logout
+app.post('/api/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.json({ ok: true });
+  });
+});
+
+// quién soy
 app.get('/api/me', async (req, res) => {
   if (!req.session.user) {
     return res.json({ user: null });
@@ -114,7 +125,7 @@ app.get('/api/me', async (req, res) => {
   try {
     const db = await getDB();
     const row = await db.get(
-      'SELECT id, email, purchased FROM users WHERE id=?',
+      'SELECT id, email, purchased FROM users WHERE id = ?',
       [req.session.user.id]
     );
     if (row) {
@@ -131,11 +142,15 @@ app.get('/api/me', async (req, res) => {
   }
 });
 
-// ===== PAGO DE PRUEBA =====
+/* ========================
+   PAGO SIMULADO
+   ======================== */
+
 app.post('/api/mock-pay', requireAuth, async (req, res) => {
   try {
     const { card } = req.body || {};
     const digits = String(card || '').replace(/\D/g, '');
+
     const okCards = ['4242424242424242', '4111111111111111', '5555555555554444'];
     const badCards = ['4000000000000002'];
 
@@ -143,15 +158,18 @@ app.post('/api/mock-pay', requireAuth, async (req, res) => {
       return res.status(400).json({ ok: false, error: 'Tarjeta inválida' });
     }
     if (badCards.includes(digits)) {
-      return res.status(402).json({ ok: false, error: 'Tarjeta rechazada (simulado)' });
+      return res.status(402).json({ ok: false, error: 'Tarjeta rechazada (demo)' });
     }
     if (!okCards.includes(digits)) {
-      return res.status(402).json({ ok: false, error: 'Tarjeta no admitida en demo' });
+      return res
+        .status(402)
+        .json({ ok: false, error: 'Tarjeta no admitida en modo demo' });
     }
 
     const db = await getDB();
-    await db.run('UPDATE users SET purchased=1 WHERE id=?', [req.session.user.id]);
+    await db.run('UPDATE users SET purchased = 1 WHERE id = ?', [req.session.user.id]);
     req.session.user = { ...req.session.user, purchased: 1 };
+
     return res.json({ ok: true });
   } catch (err) {
     console.error('MOCK PAY', err);
@@ -159,44 +177,31 @@ app.post('/api/mock-pay', requireAuth, async (req, res) => {
   }
 });
 
-// ===== DESCARGA =====
+/* ========================
+   DESCARGA
+   ======================== */
+
+// ⚠️ asegúrate de tener public/dummy.txt en el repo
 app.get('/download', requireAuth, async (req, res) => {
   try {
-    const db = await getDB();
-    const row = await db.get('SELECT purchased FROM users WHERE id=?', [
-      req.session.user.id
-    ]);
-    const purchased = row && (row.purchased ? 1 : 0);
-    req.session.user.purchased = purchased;
-    if (!purchased) {
-      return res.status(403).send('Necesitas pagar primero.');
-    }
-
-    const file = path.join(process.cwd(), 'downloads', 'inventario-app.zip');
-    return res.download(file, 'SistemaInventario.zip');
-  } catch (err) {
-    console.error('DOWNLOAD', err);
-    return res.status(500).send('Error al descargar');
-  }
-});
-
-// ===== ARRANCAR =====
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log('Servidor listo en puerto', PORT);
-});
-
-// ===== DESCARGA =====
-app.get('/download', requireAuth, async (req, res) => {
-  try {
+    // si no ha pagado, no
     if (!req.session.user.purchased) {
       return res.status(403).send('Necesitas pagar primero.');
     }
 
-    const file = path.join(process.cwd(), 'downloads', 'inventario-app.zip');
-    return res.download(file, 'SistemaInventario.zip');
+    const file = path.join(process.cwd(), 'public', 'dummy.txt');
+    return res.download(file, 'descarga-demo.txt');
   } catch (err) {
     console.error('DOWNLOAD', err);
     return res.status(500).send('Error al descargar');
   }
+});
+
+/* ========================
+   INICIO
+   ======================== */
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('Servidor listo en puerto', PORT);
 });
