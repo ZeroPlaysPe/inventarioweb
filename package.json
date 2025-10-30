@@ -5,13 +5,11 @@
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": "20.x"
-  },
   "dependencies": {
     "express": "^4.19.2",
     "express-session": "^1.17.3",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
+    "sqlite3": "^5.1.6"
   }
 }
