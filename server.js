@@ -190,7 +190,7 @@ app.get('/download', requireAuth, async (req, res) => {
     }
 
     const file = path.join(process.cwd(), 'public', 'dummy.txt');
-    return res.download(file, 'descarga-demo.txt');
+    return res.download(file, 'inventario-app.rar');
   } catch (err) {
     console.error('DOWNLOAD', err);
     return res.status(500).send('Error al descargar');
